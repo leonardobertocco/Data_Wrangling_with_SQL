@@ -12,7 +12,7 @@ The resultset should report for each (CustomerID, CustomerName)
  
  The resultset must be sorted by highest values of AbsoluteValueDifference, then by smallest to highest values of TotalNBOrders and CustomerName is that order.
  
- Please note that all values in a & b must be identical by definition of the query, as we are observing orders converted into invoices.
+Please note that all values in a & b must be identical by definition of the query, as we are observing orders converted into invoices.
 We are looking for potential differences between c & d.
 BUT, you must find them consistent as the data is clean in WideWorldImporters.
 ----------------------------------------------------------------------------------------------------
