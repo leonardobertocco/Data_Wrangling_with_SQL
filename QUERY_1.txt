@@ -1,0 +1,35 @@
+--ANSWER QUERY 1
+
+WITH InvoiceFilter as 
+(
+SELECT SC.CustomerID, 
+SUM(SIL.Quantity*SIL.UnitPrice) as InvoicesTotalValue, 
+COUNT(DISTINCT SI.InvoiceID) as TotalNBInvoices
+
+FROM sales.invoices as SI JOIN sales.invoicelines as SIL ON SI.InvoiceID = SIL.InvoiceID 
+						  JOIN sales.customers    as SC  ON SI.CustomerID = SC.CustomerID
+GROUP BY SC.CustomerID
+)
+
+SELECT 
+SC.CustomerID, 
+SC.CustomerName, 
+COUNT(DISTINCT SO.OrderId) as TotalNBOrders,
+INVF.TotalNBInvoices,
+SUM(SOL.Quantity*SOL.UnitPrice) as OrdersTotalValue,
+INVF.InvoicesTotalValue,
+ABS(SUM(SOL.Quantity*SOL.UnitPrice) - INVF.InvoicesTotalValue) as AbsoluteValueDifference
+
+FROM Sales.Orders as SO JOIN Sales.OrderLines as SOL  ON SO.OrderID = SOL.OrderID
+						JOIN Sales.Customers  as SC   ON SO.CustomerID = SC.CustomerID
+						JOIN InvoiceFilter    as INVF ON SO.CustomerID = INVF.CustomerID
+
+WHERE EXISTS 
+(
+SELECT *
+FROM Sales.Invoices AS SI
+WHERE SI.OrderID = SO.OrderID
+)
+
+GROUP BY SC.CustomerID, SC.CustomerName, INVF.TotalNBInvoices, INVF.InvoicesTotalValue
+ORDER BY AbsoluteValueDifference DESC, TotalNBOrders, CustomerName

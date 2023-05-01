@@ -1,0 +1,183 @@
+--ANSWER QUERY 3
+
+CREATE OR ALTER PROCEDURE [dbo].[ReportCustomerTurnover] 
+(@Choice INT = 1, @Year INT = 2013) AS 
+
+BEGIN
+SET nocount ON;
+
+	IF (@Choice = 1) BEGIN 
+
+		SELECT 
+		CustomerName,
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 1 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'JAN',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 2 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'FEB',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 3 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'MAR',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 4 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'APR',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 5 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'MAY',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 6 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'JUN',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 7 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'JUL',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 8 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'AUG',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 9 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'SEP',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 10 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'OCT',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 11 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'NOV',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate) = 12 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'DIC'
+
+		FROM sales.invoices as SI JOIN sales.invoicelines as SIL ON SI.InvoiceID = SIL.InvoiceID 
+								  JOIN sales.customers    as SC  ON SI.CustomerID = SC.CustomerID
+		GROUP BY CustomerName
+		ORDER BY CustomerName
+
+	END
+
+	IF (@Choice = 2) BEGIN 
+
+		SELECT 
+		CustomerName,
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate)>0 and MONTH(SI.InvoiceDate)<4 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'QUARTER_1',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate)>3 and MONTH(SI.InvoiceDate)<7 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'QUARTER_2',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate)>6 and MONTH(SI.InvoiceDate)<10 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'QUARTER_3',
+
+		SUM(
+			CASE 
+			WHEN MONTH(SI.InvoiceDate)>9 and MONTH(SI.InvoiceDate)<=12 and YEAR(SI.InvoiceDate)=@Year 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as 'QUARTER_4'
+
+		FROM sales.invoices as SI JOIN sales.invoicelines as SIL ON SI.InvoiceID = SIL.InvoiceID 
+								  JOIN sales.customers    as SC  ON SI.CustomerID = SC.CustomerID
+		GROUP BY CustomerName
+		ORDER BY CustomerName
+
+	END
+
+	IF (@Choice = 3) BEGIN 
+
+		SELECT CustomerName, 
+
+		SUM(
+			CASE 
+			WHEN YEAR(SI.InvoiceDate)=2013 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as '2013',
+
+		SUM(
+			CASE 
+			WHEN YEAR(SI.InvoiceDate)=2014 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as '2014',
+
+		SUM(
+			CASE 
+			WHEN YEAR(SI.InvoiceDate)=2015 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as '2015',
+
+		SUM(
+			CASE 
+			WHEN YEAR(SI.InvoiceDate)=2016 
+			THEN SIL.UnitPrice*SIL.Quantity
+			ELSE 0
+		END) as '2016'
+
+		FROM sales.invoices as SI JOIN sales.invoicelines as SIL ON SI.InvoiceID = SIL.InvoiceID 
+								  JOIN sales.customers    as SC  ON SI.CustomerID = SC.CustomerID
+		GROUP BY CustomerName
+		ORDER BY CustomerName
+
+	END
+END

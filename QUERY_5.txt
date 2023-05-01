@@ -1,0 +1,19 @@
+--ANSWER QUERY 5
+
+WITH ProductFilter as 
+(
+SELECT Customer.CustomerId
+FROM Customer Left JOIN Purchase ON Customer.CustomerId = Purchase.CustomerId
+Group By Customer.CustomerId
+HAVING SUM(Qty) > 50 and SUM(ProductId) = 460
+)
+SELECT ProductFilter.CustomerId, Customer.CustomerName 
+FROM ProductFilter JOIN Customer ON ProductFilter.CustomerId = Customer.CustomerId
+
+--SELECT CustomerId
+--FROM Purchase
+--GROUP BY CustomerId
+--HAVING SUM(Qty) > 50
+
+--SELECT SUM(ProductId)
+--FROM Product

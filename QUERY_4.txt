@@ -1,0 +1,30 @@
+--ANSWER QUERY 4
+
+WITH OrderLoss AS
+		(
+		SELECT SC.CustomerName, SC.CustomerID, SCC.CustomerCategoryName, SUM(SOL.Quantity*SOL.UnitPrice) as TOTALLOST
+		
+		FROM Sales.CustomerCategories as SCC JOIN Sales.Customers  as SC  ON SCC.CustomerCategoryID = SC.CustomerCategoryID
+											 JOIN Sales.Orders     as SO  ON SC.CustomerID = SO.CustomerID
+											 JOIN Sales.OrderLines as SOL ON SOL.OrderID = SO.OrderID 
+		WHERE NOT EXISTS
+			(
+			SELECT SI.CustomerID
+			FROM Sales.Invoices AS SI
+			WHERE SI.OrderID = SO.OrderID
+			)
+
+		GROUP BY  SC.CustomerName, SC.CustomerID, SCC.CustomerCategoryName
+		),
+
+	 MaxLossInsideCategory AS 
+		(
+		SELECT OLS.CustomerCategoryName, MAX(TOTALLOST) as MaxLoss
+		FROM OrderLoss as OLS
+		GROUP BY OLS.CustomerCategoryName
+		)
+
+SELECT MLIC.CustomerCategoryName, MLIC.MaxLoss, OL.CustomerName, OL.CustomerID
+FROM MaxLossInsideCategory as MLIC JOIN OrderLoss as OL ON MLIC.MaxLoss = OL.TOTALLOST AND MLIC.CustomerCategoryName = OL.CustomerCategoryName
+GROUP BY MLIC.CustomerCategoryName, MLIC.MaxLoss, OL.CustomerName, OL.CustomerID
+ORDER BY MaxLoss desc

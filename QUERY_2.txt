@@ -1,0 +1,10 @@
+--ANSWER QUERY 2
+
+UPDATE Sales.InvoiceLines
+SET UnitPrice = UnitPrice + 20
+WHERE InvoiceLineID = ( 
+						SELECT MIN(SIL.InvoiceLineID)
+						FROM sales.invoices as SI JOIN sales.invoicelines as SIL ON SI.InvoiceID = SIL.InvoiceID 
+												  JOIN sales.customers    as SC  ON SI.CustomerID = SC.CustomerID
+						WHERE SC.CustomerID = 1060
+					  )
